@@ -1,0 +1,43 @@
+# detection_params.yaml  –  Sonar Crab-Pot Detection Pipeline
+# University of Delaware | Krishna Digamarthi
+
+packet_stitcher:
+  scan_width: 1024         # Expected scan-line width (pixels)
+    max_buffer_age_s: 2.0    # Drop incomplete buffers older than N seconds
+      max_buffers: 64          # Maximum concurrent scan-line buffers
+
+      preprocessor:
+        clahe_clip: 2.0          # CLAHE contrast limit
+          clahe_grid: [8, 8]       # CLAHE tile grid size
+            blur_ksize: 5            # Gaussian blur kernel (odd)
+              thresh_block: 21         # Adaptive threshold block size (odd, >= 3)
+                thresh_c: 4              # Adaptive threshold constant C
+                  morph_ksize: 3           # Morphological kernel size
+                    morph_open_iter: 1       # Opening iterations (removes noise)
+                      morph_close_iter: 2      # Closing iterations (fills gaps)
+
+                      geometry_filter:
+                        min_area: 40.0           # Minimum contour area (px^2)
+                          max_area: 4000.0         # Maximum contour area (px^2)
+                            min_aspect: 0.3          # Min width/height ratio
+                              max_aspect: 5.0          # Max width/height ratio
+                                min_solidity: 0.45       # Min contour_area / hull_area
+                                  min_extent: 0.25         # Min contour_area / bbox_area
+                                    min_confidence: 0.35     # Min score to publish
+
+                                    gnss_imu_fusion:
+                                      gnss_noise_m: 3.0        # GNSS horizontal accuracy (m, 1-sigma)
+                                        imu_heading_rate_noise: 0.01   # rad/s
+                                          odom_velocity_noise: 0.05      # m/s
+                                            process_noise_pos: 0.01
+                                              process_noise_vel: 0.1
+
+                                              sonar_hardware:
+                                                range_m: 50.0            # Sonar range / half-swath (m)
+                                                  scan_rate_hz: 10.0
+                                                    interface: udp           # 'udp' or 'serial'
+                                                      udp_host: '0.0.0.0'
+                                                        udp_port: 5555
+                                                          serial_port: '/dev/ttyUSB0'
+                                                            serial_baud: 115200
+                                                            

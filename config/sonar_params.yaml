@@ -1,0 +1,86 @@
+# Humminbird HELIX Side-Scan Sonar Configuration
+# Used for sonar-crab-pot-detection pipeline
+
+sonar:
+  # Network connection
+  host: "192.168.1.100"  # Sonar device IP (Humminbird hotspot default)
+  port: 5200              # UDP broadcast port
+  timeout: 5.0            # Receive timeout seconds
+  recv_buffer_mb: 1       # Socket receive buffer size
+
+  # Device settings
+  model: "HELIX_9_MEGA_SI_GPS_G3"
+  firmware_version: "3.x"
+  channel: "side_scan"    # side_scan | down_scan | dual
+
+  # Side-scan parameters
+  side_scan:
+    range_m: 30.0         # Maximum sonar range (10, 20, 30, 40, 60, 80m)
+    frequency: "MEGA"     # MEGA (1.2MHz) or standard (455/800kHz)
+    sensitivity: 8        # 1-10 scale
+    contrast: 7           # 1-10 scale
+    
+  # Packet reconstruction
+  packet:
+    header_size: 64       # Bytes in Humminbird UDP header
+    max_size: 65535        # Maximum UDP packet size
+    side_scan_channel_id: 0x02  # Side-scan channel identifier
+    down_scan_channel_id: 0x01
+
+visualization:
+  waterfall:
+    width: 1024           # Waterfall image width (pixels)
+    height: 600           # Waterfall image height (scan lines)
+    colormap: "jet"       # jet | inferno | magma | gray | viridis
+    
+  image_processing:
+    gamma: 1.2            # Gamma correction factor
+    contrast_alpha: 1.5   # Linear contrast scaling
+    brightness_beta: -20  # Brightness offset
+    clahe_clip: 3.0       # CLAHE clip limit
+    clahe_grid: 8         # CLAHE tile grid size
+    tvg_min: 0.7          # Time-varying gain minimum
+    tvg_max: 1.3          # Time-varying gain maximum
+    
+  water_column:
+    width_pixels: 20      # Blank zone at center (nadir)
+
+detection:
+  model:
+    path: "models/crab_pot_yolov8n.pt"
+    input_size: 640       # YOLOv8 input resolution
+    device: "cuda"        # cuda | cpu
+    
+  thresholds:
+    confidence: 0.45      # Minimum detection confidence
+    iou: 0.50             # NMS IoU threshold
+    
+  classes:
+    0: "crab_pot"
+    1: "debris"
+    
+  calibration:
+    # Physical scale: pixels to meters conversion
+    # Updated when sonar range setting changes
+    range_m: 30.0         # Must match sonar.side_scan.range_m
+    pixels_per_range: 600 # Waterfall pixels representing full range
+
+output:
+  detection_log: true
+  log_format: "csv"
+  output_dir: "results"
+  save_waterfall_frames: false
+  waterfall_save_interval: 50  # Save every N pings if enabled
+  
+  ros2:
+    enabled: false
+    namespace: "/sonar"
+    detection_topic: "/sonar/crab_pot_detections"
+    waterfall_topic: "/sonar/waterfall_image"
+    pose_topic: "/sonar/vessel_pose"
+
+deployment:
+  platform: "jetson_nano"
+  tensorrt: false         # Enable TensorRT optimization
+  fp16: false             # Use FP16 precision with TensorRT
+  max_batch_size: 1

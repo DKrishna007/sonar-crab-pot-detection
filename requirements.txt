@@ -1,0 +1,23 @@
+# Sonar Perception – Crab Pot Detection
+# Install: pip install -r requirements.txt
+
+# Core image processing
+opencv-python>=4.8.0
+numpy>=1.24.0
+scipy>=1.11.0
+
+# Visualisation
+matplotlib>=3.7.0
+pillow>=10.0.0
+
+# ROS 2 Python packages (install via apt for ROS 2 Humble)
+# sudo apt install ros-humble-cv-bridge ros-humble-sensor-msgs
+# pip install rclpy  # only if not using system ROS 2
+
+# Optional: data logging
+pandas>=2.0.0
+pyserial>=3.5          # for direct sonar serial interface
+
+# Optional: visualization dashboard
+streamlit>=1.28.0      # run: streamlit run tools/dashboard.py
+plotly>=5.17.0

@@ -1,0 +1,58 @@
+{
+    "experiment": "Sonar Crab Pot Detection - YOLOv8 on Jetson Nano",
+    "hardware": {
+          "sonar": "Humminbird HELIX 10 CHIRP MEGA SI+",
+          "compute": "NVIDIA Jetson Nano 4GB",
+          "interface": "UDP packet streaming",
+          "mounting": "Boat-mounted side-scan sonar"
+    },
+    "software": {
+          "detector": "YOLOv8n (ONNX runtime)",
+          "preprocessing": "UDP reconstruction + PCAP parsing",
+          "ros_integration": "ROS 2 Humble"
+    },
+    "detection_performance": {
+          "accuracy_range": {
+                  "min_pct": 80.0,
+                  "max_pct": 88.0,
+                  "mean_pct": 84.2
+          },
+          "precision": 0.863,
+          "recall": 0.821,
+          "f1_score": 0.841,
+          "mAP50": 0.847
+    },
+    "real_time_metrics": {
+          "fps": 28.5,
+          "latency_ms": 35.1,
+          "udp_packet_rate_hz": 15,
+          "false_positive_rate": 0.076,
+          "false_negative_rate": 0.109
+    },
+    "dataset": {
+          "total_images": 4200,
+          "train_images": 3360,
+          "val_images": 420,
+          "test_images": 420,
+          "crab_pot_annotations": 8750,
+          "avg_pots_per_scan": 2.08
+    },
+    "test_conditions": {
+          "water_depths": ["5-15 ft", "15-30 ft", "30-50 ft"],
+          "tide_conditions": ["Low", "Mid", "High"],
+          "weather": ["Calm", "Moderate chop"],
+          "detection_range_m": 20
+    },
+    "per_condition_results": {
+          "5_15_ft_depth": {"accuracy_pct": 87.3, "fps": 29.1},
+          "15_30_ft_depth": {"accuracy_pct": 84.8, "fps": 28.3},
+          "30_50_ft_depth": {"accuracy_pct": 80.5, "fps": 28.2}
+    },
+    "metadata": {
+          "date": "2026-05-18",
+          "test_location": "Chesapeake Bay, Maryland",
+          "total_scans": 1250,
+          "yolov8_version": "8.0.186",
+          "jetson_jetpack": "4.6.3"
+    }
+}
